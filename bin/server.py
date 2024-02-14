@@ -4,6 +4,7 @@ import sys
 
 from house_manager import get_arguments, connect, glow_msg, serve
 
+
 def main(argv: List[str]) -> None:
     args = get_arguments(argv[1:])
 
@@ -12,6 +13,7 @@ def main(argv: List[str]) -> None:
                      daemon=True).start()
 
     serve(args)
+
 
 if __name__ == "__main__":
     main(sys.argv)

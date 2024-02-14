@@ -13,17 +13,22 @@ METRIC_METADATA = {
 METRIC_HELP = "# HELP {metric} {help}"
 METRIC_TYPE = "# TYPE {metric} {_type}"
 
+
 def get_metrics() -> None:
     now = datetime.utcnow()
 
     lines = []
 
     metric = "octopus_rate"
-    lines.append(METRIC_HELP.format(metric=metric, help=METRIC_METADATA[metric][0]))
-    lines.append(METRIC_TYPE.format(metric=metric, _type=METRIC_METADATA[metric][1]))
+    lines.append(
+        METRIC_HELP.format(metric=metric, help=METRIC_METADATA[metric][0]))
+    lines.append(
+        METRIC_TYPE.format(metric=metric, _type=METRIC_METADATA[metric][1]))
 
-    lines.append(f'octopus_rate{{type="electric"}} {get_electricity_price(now)}')
-    lines.append(f'octopus_rate{{type="gas"}} {get_gas_price(now)}')
+    lines.append(
+        f'octopus_rate{{type="electric"}} {get_electricity_price(now)}')
+    lines.append(
+        f'octopus_rate{{type="gas"}} {get_gas_price(now)}')
 
     lines.append(get_glow_metrics())
 

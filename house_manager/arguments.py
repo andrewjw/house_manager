@@ -10,6 +10,7 @@ parser.add_argument('--port', type=int, nargs='?', default=1883,
 parser.add_argument('--bind', type=str, nargs='?', default="0.0.0.0:6060",
                     help='the ip address and port to bind to')
 
+
 def get_arguments(args) -> argparse.Namespace:
     args = parser.parse_args(args)
 

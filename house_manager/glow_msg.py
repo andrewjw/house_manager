@@ -47,7 +47,9 @@ GAS_CUM: Optional[int] = None
 
 
 def glow_msg(client, userdata, msg: str) -> None:
-    global ELECTRIC_LAST_MSG, GAS_LAST_MSG, ELECTRIC_COST, GAS_COST, ELECTRIC_CUM, GAS_CUM
+    global ELECTRIC_LAST_MSG, GAS_LAST_MSG, \
+           ELECTRIC_COST, GAS_COST, \
+           ELECTRIC_CUM, GAS_CUM
     # # Code adapted from
     # # https://gist.github.com/ndfred/b373eeafc4f5b0870c1b8857041289a9
     payload = json.loads(msg.payload)
@@ -60,10 +62,10 @@ def glow_msg(client, userdata, msg: str) -> None:
         mpan = energy["import"]["mpan"]
         if mpan.lower() == "read pending":
             return
-        
+
         #    convert_units(energy["export"]["cumulative"],
         #                  energy["export"]["units"])
-        
+
         import_cum = convert_units(energy["import"]["cumulative"],
                                    energy["import"]["units"])
 
@@ -72,11 +74,11 @@ def glow_msg(client, userdata, msg: str) -> None:
             ELECTRIC_COST = 0.0
             ELECTRIC_CUM = import_cum
         else:
-            print((import_cum - ELECTRIC_CUM), get_electricity_price(now), (now - ELECTRIC_LAST_MSG))
             if now.date() != ELECTRIC_LAST_MSG.date():
                 ELECTRIC_COST += get_electricity_standing_charge(now)
 
-            ELECTRIC_COST += (import_cum - ELECTRIC_CUM) * get_electricity_price(now)
+            ELECTRIC_COST += \
+                (import_cum - ELECTRIC_CUM) * get_electricity_price(now)
 
             ELECTRIC_CUM = import_cum
 
@@ -84,7 +86,7 @@ def glow_msg(client, userdata, msg: str) -> None:
         mprn = energy["import"]["mprn"]
         if mprn.lower() == "read pending":
             return
-        
+
         gas_cum = convert_units(energy["import"]["cumulative"],
                                 energy["import"]["units"])
         if GAS_LAST_MSG is None:
