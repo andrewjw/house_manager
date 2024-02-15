@@ -4,6 +4,7 @@ import traceback
 import sys
 
 import paho.mqtt.client as mqtt
+from sentry_sdk import capture_exception
 
 
 def on_connect(topic, client, userdata, flags, rc):
@@ -17,6 +18,7 @@ def safe_on_message(on_message):
         try:
             return on_message(client, userdata, msg)
         except Exception as e:
+            capture_exception(e)
             sys.stderr.write(f"Exception processing message: {msg}\n")
 
             traceback.print_exc()
