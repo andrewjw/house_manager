@@ -5,7 +5,13 @@ import sys
 from house_manager import get_arguments, connect, glow_msg, serve
 
 
-def main(argv: List[str]) -> None:
+def main(argv: List[str]) -> None:    
+    sentry_sdk.init(
+        dsn=os.environ.get("SENTRY_DSN"),
+        traces_sample_rate=0.0,
+        profiles_sample_rate=0.0,
+    )
+
     args = get_arguments(argv[1:])
 
     threading.Thread(target=connect,
