@@ -43,7 +43,7 @@ ELECTRIC_CUM: Optional[int] = None
 GAS_CUM: Optional[int] = None
 
 ELECTRIC_COST: Optional[int] = None
-GAS_CUM: Optional[int] = None
+GAS_COST: Optional[int] = None
 
 
 def glow_msg(client, userdata, msg: str) -> None:
