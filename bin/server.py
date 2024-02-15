@@ -1,6 +1,9 @@
+import os
 import threading
 from typing import List
 import sys
+
+import sentry_sdk
 
 from house_manager import get_arguments, connect, glow_msg, serve
 
