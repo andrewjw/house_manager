@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-from typing import Optional
+from typing import Any, Optional
 
 from .prices import get_electricity_price, get_electricity_standing_charge, \
                     get_gas_price, get_gas_standing_charge
@@ -39,14 +39,14 @@ METRIC_TYPE = "# TYPE {metric} {type}"
 ELECTRIC_LAST_MSG: Optional[datetime] = None
 GAS_LAST_MSG: Optional[datetime] = None
 
-ELECTRIC_CUM: Optional[int] = None
-GAS_CUM: Optional[int] = None
+ELECTRIC_CUM: Optional[float] = None
+GAS_CUM: Optional[float] = None
 
-ELECTRIC_COST: Optional[int] = None
-GAS_COST: Optional[int] = None
+ELECTRIC_COST: Optional[float] = None
+GAS_COST: Optional[float] = None
 
 
-def glow_msg(client, userdata, msg: str) -> None:
+def glow_msg(client, userdata, msg: Any) -> None:
     global ELECTRIC_LAST_MSG, GAS_LAST_MSG, \
            ELECTRIC_COST, GAS_COST, \
            ELECTRIC_CUM, GAS_CUM
