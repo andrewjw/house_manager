@@ -69,7 +69,8 @@ def glow_msg(client, userdata, msg: Any) -> None:
         import_cum = convert_units(energy["import"]["cumulative"],
                                    energy["import"]["units"])
 
-        if ELECTRIC_LAST_MSG is None:
+        if ELECTRIC_LAST_MSG is None or ELECTRIC_COST is None \
+           or ELECTRIC_CUM is None:
             ELECTRIC_LAST_MSG = now
             ELECTRIC_COST = 0.0
             ELECTRIC_CUM = import_cum
@@ -89,7 +90,7 @@ def glow_msg(client, userdata, msg: Any) -> None:
 
         gas_cum = convert_units(energy["import"]["cumulative"],
                                 energy["import"]["units"])
-        if GAS_LAST_MSG is None:
+        if GAS_LAST_MSG is None or GAS_COST is None or GAS_CUM is None:
             GAS_LAST_MSG = now
             GAS_COST = 0.0
             GAS_CUM = gas_cum

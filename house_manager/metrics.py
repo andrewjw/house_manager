@@ -14,7 +14,7 @@ METRIC_HELP = "# HELP {metric} {help}"
 METRIC_TYPE = "# TYPE {metric} {_type}"
 
 
-def get_metrics() -> None:
+def get_metrics() -> str:
     now = datetime.utcnow()
 
     lines = []

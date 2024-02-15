@@ -2,7 +2,7 @@
 
 set -e
 
-mypy -m house_manager
+mypy -p house_manager
 
 mypy bin/server.py
 
