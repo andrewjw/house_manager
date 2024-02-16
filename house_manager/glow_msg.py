@@ -77,7 +77,7 @@ def glow_msg(client, userdata, msg: Any) -> None:
         else:
             if now.date() != ELECTRIC_LAST_MSG.date():
                 ELECTRIC_COST += get_electricity_standing_charge(now)
-
+            ELECTRIC_LAST_MSG = now
             ELECTRIC_COST += \
                 (import_cum - ELECTRIC_CUM) * get_electricity_price(now)
 
@@ -97,6 +97,8 @@ def glow_msg(client, userdata, msg: Any) -> None:
         else:
             if now.date() != GAS_LAST_MSG.date():
                 GAS_COST += get_gas_standing_charge(now)
+
+            GAS_LAST_MSG = now
 
             # Not sure why the / 1000 is needed?
             # Maybe glow report Wh but label it kWh?
