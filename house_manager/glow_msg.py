@@ -100,9 +100,7 @@ def glow_msg(client, userdata, msg: Any) -> None:
 
             GAS_LAST_MSG = now
 
-            # Not sure why the / 1000 is needed?
-            # Maybe glow report Wh but label it kWh?
-            GAS_COST += (gas_cum - GAS_CUM) * get_gas_price(now) / 1000
+            GAS_COST += (gas_cum - GAS_CUM) * get_gas_price(now)
 
             GAS_CUM = gas_cum
     else:
