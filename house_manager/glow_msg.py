@@ -3,7 +3,7 @@ import json
 from typing import Any, Optional
 
 from .prices import get_electricity_price, get_electricity_standing_charge, \
-                    get_gas_price, get_gas_standing_charge
+                    get_gas_price, get_gas_standing_charge, get_export_price
 
 # {'electricitymeter': {'timestamp': '2022-11-07T09:20:08Z',
 #   'energy': {'export': {'cumulative': 0.0, 'units': 'kWh'},
@@ -42,6 +42,9 @@ GAS_LAST_MSG: Optional[datetime] = None
 ELECTRIC_CUM: Optional[float] = None
 GAS_CUM: Optional[float] = None
 
+ELECTRIC_LAST_POWER: Optional[float] = None
+ELECTRIC_EXPORT: float = 0.0
+
 ELECTRIC_COST: Optional[float] = None
 GAS_COST: Optional[float] = None
 
@@ -49,7 +52,8 @@ GAS_COST: Optional[float] = None
 def glow_msg(client, userdata, msg: Any) -> None:
     global ELECTRIC_LAST_MSG, GAS_LAST_MSG, \
            ELECTRIC_COST, GAS_COST, \
-           ELECTRIC_CUM, GAS_CUM
+           ELECTRIC_CUM, GAS_CUM, \
+           ELECTRIC_LAST_POWER, ELECTRIC_EXPORT
     # # Code adapted from
     # # https://gist.github.com/ndfred/b373eeafc4f5b0870c1b8857041289a9
     payload = json.loads(msg.payload)
@@ -59,6 +63,7 @@ def glow_msg(client, userdata, msg: Any) -> None:
 
     now = datetime.utcnow()
     if key == "electricitymeter":
+        power = get_power(payload[key]["power"])
         mpan = energy["import"]["mpan"]
         if mpan.lower() == "read pending":
             return
@@ -74,14 +79,41 @@ def glow_msg(client, userdata, msg: Any) -> None:
             ELECTRIC_LAST_MSG = now
             ELECTRIC_COST = 0.0
             ELECTRIC_CUM = import_cum
+            ELECTRIC_LAST_POWER = power
+            ELECTRIC_EXPORT = 0
         else:
             if now.date() != ELECTRIC_LAST_MSG.date():
                 ELECTRIC_COST += get_electricity_standing_charge(now)
+
+            gap_since = (now - ELECTRIC_LAST_MSG).total_seconds()
+            if gap_since < 300:
+                assert ELECTRIC_LAST_POWER is not None
+                if ELECTRIC_LAST_POWER <= 0 and power <= 0:
+                    avg_power = abs((power + ELECTRIC_LAST_POWER) / 2)
+                    print(f"power both: {power} + {ELECTRIC_LAST_POWER}")
+                elif ELECTRIC_LAST_POWER <= 0 and power > 0:
+                    avg_power = abs(ELECTRIC_LAST_POWER / 2)
+                    print(f"power last {ELECTRIC_LAST_POWER}")
+                elif ELECTRIC_LAST_POWER > 0 and power <= 0:
+                    avg_power = abs(power / 2)
+                    print(f"power this {power}")
+                else:
+                    avg_power = 0
+                exported = ELECTRIC_EXPORT \
+                    + avg_power * (gap_since / (60 * 60))
+                print(f"exported {avg_power} {gap_since} "
+                      "{avg_power * (gap_since / (60 * 60))} {exported}")
+            else:
+                exported = ELECTRIC_EXPORT
+
+            ELECTRIC_LAST_POWER = power
+
             ELECTRIC_LAST_MSG = now
             ELECTRIC_COST += \
-                (import_cum - ELECTRIC_CUM) * get_electricity_price(now)
-
+                (import_cum - ELECTRIC_CUM) * get_electricity_price(now) \
+                + (exported - ELECTRIC_EXPORT) * get_export_price(now)
             ELECTRIC_CUM = import_cum
+            ELECTRIC_EXPORT = exported
 
     elif key == "gasmeter":
         mprn = energy["import"]["mprn"]
@@ -115,6 +147,10 @@ def get_glow_metrics() -> str:
 # TYPE octopus_cost counter
 octopus_cost{{type="electric"}} {ELECTRIC_COST}
 octopus_cost{{type="gas"}} {GAS_COST}
+
+# HELP octopus_export The total kwh exported
+# TYPE octopus_export counter
+octopus_export {ELECTRIC_EXPORT}
 """
 
 
@@ -122,3 +158,7 @@ def convert_units(value: float, units: str) -> float:
     if units == "kW" or units == "kWh":
         return value
     return value / 1000.0
+
+
+def get_power(msg) -> float:
+    return convert_units(msg["value"], msg["units"])

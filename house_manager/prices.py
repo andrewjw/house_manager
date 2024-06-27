@@ -20,6 +20,10 @@ def get_electricity_price(dt: datetime) -> float:
     return 0.09 if cheap_rate else 0.3103
 
 
+def get_export_price(dt: datetime) -> float:
+    return -0.08
+
+
 def get_electricity_standing_charge(dt: datetime) -> float:
     if dt >= datetime(2024, 4, 1):
         return 0.47849
