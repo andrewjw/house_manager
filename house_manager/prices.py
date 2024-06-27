@@ -21,7 +21,7 @@ def get_electricity_price(dt: datetime) -> float:
 
 
 def get_export_price(dt: datetime) -> float:
-    return -0.08
+    return 0.08
 
 
 def get_electricity_standing_charge(dt: datetime) -> float:

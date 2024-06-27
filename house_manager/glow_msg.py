@@ -46,13 +46,14 @@ ELECTRIC_LAST_POWER: Optional[float] = None
 ELECTRIC_EXPORT: float = 0.0
 
 ELECTRIC_COST: Optional[float] = None
+ELECTRIC_FEED_IN: Optional[float] = None
 GAS_COST: Optional[float] = None
 
 
 def glow_msg(client, userdata, msg: Any) -> None:
     global ELECTRIC_LAST_MSG, GAS_LAST_MSG, \
            ELECTRIC_COST, GAS_COST, \
-           ELECTRIC_CUM, GAS_CUM, \
+           ELECTRIC_CUM, GAS_CUM, ELECTRIC_FEED_IN, \
            ELECTRIC_LAST_POWER, ELECTRIC_EXPORT
     # # Code adapted from
     # # https://gist.github.com/ndfred/b373eeafc4f5b0870c1b8857041289a9
@@ -78,6 +79,7 @@ def glow_msg(client, userdata, msg: Any) -> None:
            or ELECTRIC_CUM is None:
             ELECTRIC_LAST_MSG = now
             ELECTRIC_COST = 0.0
+            ELECTRIC_FEED_IN = 0.0
             ELECTRIC_CUM = import_cum
             ELECTRIC_LAST_POWER = power
             ELECTRIC_EXPORT = 0
@@ -90,19 +92,17 @@ def glow_msg(client, userdata, msg: Any) -> None:
                 assert ELECTRIC_LAST_POWER is not None
                 if ELECTRIC_LAST_POWER <= 0 and power <= 0:
                     avg_power = abs((power + ELECTRIC_LAST_POWER) / 2)
-                    print(f"power both: {power} + {ELECTRIC_LAST_POWER}")
+                    sys.stderr.write(f"power both: {power} + {ELECTRIC_LAST_POWER}\n")
                 elif ELECTRIC_LAST_POWER <= 0 and power > 0:
                     avg_power = abs(ELECTRIC_LAST_POWER / 2)
-                    print(f"power last {ELECTRIC_LAST_POWER}")
+                    sys.stderr.write(f"power last {ELECTRIC_LAST_POWER}\n")
                 elif ELECTRIC_LAST_POWER > 0 and power <= 0:
                     avg_power = abs(power / 2)
-                    print(f"power this {power}")
+                    sys.stderr.write(f"power this {power}\n")
                 else:
                     avg_power = 0
                 exported = ELECTRIC_EXPORT \
                     + avg_power * (gap_since / (60 * 60))
-                print(f"exported {avg_power} {gap_since} "
-                      "{avg_power * (gap_since / (60 * 60))} {exported}")
             else:
                 exported = ELECTRIC_EXPORT
 
@@ -110,8 +110,9 @@ def glow_msg(client, userdata, msg: Any) -> None:
 
             ELECTRIC_LAST_MSG = now
             ELECTRIC_COST += \
-                (import_cum - ELECTRIC_CUM) * get_electricity_price(now) \
-                + (exported - ELECTRIC_EXPORT) * get_export_price(now)
+                (import_cum - ELECTRIC_CUM) * get_electricity_price(now)
+            ELECTRIC_FEED_IN += \
+                (exported - ELECTRIC_EXPORT) * get_export_price(now)
             ELECTRIC_CUM = import_cum
             ELECTRIC_EXPORT = exported
 
@@ -147,6 +148,10 @@ def get_glow_metrics() -> str:
 # TYPE octopus_cost counter
 octopus_cost{{type="electric"}} {ELECTRIC_COST}
 octopus_cost{{type="gas"}} {GAS_COST}
+
+# HELP octopus_feed_in The amount earn from feed in
+# TYPE octopus_feed_in counter
+octopus_feed_in{{type="electric"}} {ELECTRIC_FEED_IN}
 
 # HELP octopus_export The total kwh exported
 # TYPE octopus_export counter
