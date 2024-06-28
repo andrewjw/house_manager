@@ -92,13 +92,10 @@ def glow_msg(client, userdata, msg: Any) -> None:
                 assert ELECTRIC_LAST_POWER is not None
                 if ELECTRIC_LAST_POWER <= 0 and power <= 0:
                     avg_power = abs((power + ELECTRIC_LAST_POWER) / 2)
-                    sys.stderr.write(f"power both: {power} + {ELECTRIC_LAST_POWER}\n")
                 elif ELECTRIC_LAST_POWER <= 0 and power > 0:
                     avg_power = abs(ELECTRIC_LAST_POWER / 2)
-                    sys.stderr.write(f"power last {ELECTRIC_LAST_POWER}\n")
                 elif ELECTRIC_LAST_POWER > 0 and power <= 0:
                     avg_power = abs(power / 2)
-                    sys.stderr.write(f"power this {power}\n")
                 else:
                     avg_power = 0
                 exported = ELECTRIC_EXPORT \
