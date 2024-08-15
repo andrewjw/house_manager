@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 import zoneinfo
 
 london = zoneinfo.ZoneInfo("Europe/London")
@@ -13,6 +13,8 @@ def get_electricity_price(dt: datetime) -> float:
             if dt >= datetime(2024, 7, 1) else
             (localtime.hour == 4 and localtime.hour < 30))
 
+    if dt.date() == date(2024, 8, 15) and dt.hour == 13:
+        return 0
     if dt >= datetime(2024, 7, 1):
         return 0.085 if cheap_rate else 0.24393
     if dt >= datetime(2024, 4, 1):
