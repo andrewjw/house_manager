@@ -35,6 +35,8 @@ def get_electricity_standing_charge(dt: datetime) -> float:
 
 
 def get_gas_price(dt: datetime) -> float:
+    if dt >= datetime(2024, 10, 1):
+        return 0.06161
     if dt >= datetime(2024, 7, 1):
         return 0.05402
     if dt >= datetime(2024, 4, 1):
@@ -43,6 +45,8 @@ def get_gas_price(dt: datetime) -> float:
 
 
 def get_gas_standing_charge(dt: datetime) -> float:
+    if dt >= datetime(2024, 10, 1):
+        return 0.29379
     if dt >= datetime(2024, 4, 1):
         return 0.28949
     return 0.2747
