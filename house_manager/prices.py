@@ -6,12 +6,11 @@ london = zoneinfo.ZoneInfo("Europe/London")
 
 def get_electricity_price(dt: datetime) -> float:
     localtime = dt.astimezone(london)
-    cheap_rate = (localtime.hour == 0 and localtime.hour >= 30) \
+    cheap_rate = (localtime.hour == 0 and localtime.minute >= 30) \
         or localtime.hour in (1, 2, 3) \
-        or ((localtime.hour == 4 or
-                 (localtime.hour == 5 and localtime.hour < 30))
+        or (localtime.hour == 4 or (localtime.hour == 5 and localtime.minute < 30))
             if dt >= datetime(2024, 7, 1) else
-            (localtime.hour == 4 and localtime.hour < 30))
+            (localtime.hour == 4 and localtime.minute < 30))
 
     if (dt.date() == date(2024, 8, 15) and localtime.hour == 13) \
        or (dt.date() == date(2024, 8, 31) and localtime.hour == 13) \
