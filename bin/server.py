@@ -5,7 +5,7 @@ import sys
 
 import sentry_sdk
 
-from house_manager import get_arguments, connect, glow_msg, serve
+from house_manager import get_arguments, connect, serve
 
 
 def main(argv: List[str]) -> None:
@@ -18,7 +18,7 @@ def main(argv: List[str]) -> None:
     args = get_arguments(argv[1:])
 
     threading.Thread(target=connect,
-                     args=(args, glow_msg),
+                     args=(args, ),
                      daemon=True).start()
 
     serve(args)

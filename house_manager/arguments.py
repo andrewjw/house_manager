@@ -9,6 +9,8 @@ parser.add_argument('--port', type=int, nargs='?', default=1883,
                     help='the mqtt port to connect to.')
 parser.add_argument('--bind', type=str, nargs='?', default="0.0.0.0:6060",
                     help='the ip address and port to bind to')
+parser.add_argument('--foxess', type=str, nargs='?', default="foxess",
+                    help='the foxessprom server to connect to.')
 
 
 def get_arguments(args) -> argparse.Namespace:
