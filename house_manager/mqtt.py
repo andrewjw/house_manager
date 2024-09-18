@@ -6,31 +6,36 @@ import sys
 import paho.mqtt.client as mqtt
 from sentry_sdk import capture_exception
 
+#from .foxess_msg import foxess_msg
+from .glow_msg import glow_msg
 
-def on_connect(topic, client, userdata, flags, rc):
+
+def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
 
-    client.subscribe(topic)
+    client.subscribe("glow/+/+/+")
+    #client.subscribe("foxess/+")
 
 
-def safe_on_message(on_message):
-    def safe_on_message(client, userdata, msg):
-        try:
-            return on_message(client, userdata, msg)
-        except Exception as e:
-            capture_exception(e)
-            sys.stderr.write(f"Exception processing message: {msg}\n")
+def safe_on_message(args, client, userdata, msg):
+    try:
+        if msg.topic.startswith("glow/"):
+            return glow_msg(client, userdata, msg)
+        #elif msg.topic.startswith("foxess/"):
+        #    return foxess_msg(args.foxess, msg)
+        else:
+            raise ValueError(f"Unknown topic {msg.topic}")
+    except Exception as e:
+        capture_exception(e)
+        sys.stderr.write(f"Exception processing message: {msg}\n")
 
-            traceback.print_exc()
-
-    return safe_on_message
+        traceback.print_exc()
 
 
-def connect(args, on_message, retry=True):
+def connect(args, retry=True):
     client = mqtt.Client()
-    client.on_connect = \
-        functools.partial(on_connect, "glow/+/+/+")
-    client.on_message = safe_on_message(on_message)
+    client.on_connect = on_connect
+    client.on_message = functools.partial(safe_on_message, args)
 
     while True:
         try:

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 import json
 from typing import Any, Optional
 
@@ -62,7 +62,7 @@ def glow_msg(client, userdata, msg: Any) -> None:
     key = list(payload.keys())[0]
     energy = payload[key]["energy"]
 
-    now = datetime.utcnow()
+    now = datetime.now(UTC)
     if key == "electricitymeter":
         power = get_power(payload[key]["power"])
         mpan = energy["import"]["mpan"]

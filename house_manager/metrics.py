@@ -1,7 +1,8 @@
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 
 from .glow_msg import get_glow_metrics
 from .prices import get_electricity_price, get_gas_price
+from .weather_forecast import CloudForecast
 
 METRIC = "glowprom_{metric}"
 METRIC_KEYS = "{{type=\"{type}\", {idname}=\"{idvalue}\"}}"
@@ -13,9 +14,10 @@ METRIC_METADATA = {
 METRIC_HELP = "# HELP {metric} {help}"
 METRIC_TYPE = "# TYPE {metric} {_type}"
 
+CLOUDFORECAST = CloudForecast()
 
 def get_metrics() -> str:
-    now = datetime.utcnow()
+    now = datetime.now(UTC)
 
     lines = []
 
@@ -31,5 +33,13 @@ def get_metrics() -> str:
         f'octopus_rate{{type="gas"}} {get_gas_price(now)}')
 
     lines.append(get_glow_metrics())
+
+    lines.append(METRIC_HELP.format(metric="forecast_cloud", help="Cloud Cover"))
+    lines.append(METRIC_TYPE.format(metric="forecast_cloud", _type="gauge"))
+    forecast = CLOUDFORECAST.get_clouds(now)
+    lines.append(f'forecast_cloud{{level="total"}} {forecast.total}')
+    lines.append(f'forecast_cloud{{level="high"}} {forecast.high}')
+    lines.append(f'forecast_cloud{{level="mid"}} {forecast.mid}')
+    lines.append(f'forecast_cloud{{level="low"}} {forecast.low}')
 
     return "\n".join(lines)

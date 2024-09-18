@@ -1,7 +1,11 @@
 from datetime import datetime
 import http.server
+import json
 
 from .metrics import get_metrics
+
+BOOTSTRAP_VERSION = json.load(open("package.json"))["dependencies"]["bootstrap"][1:]
+REACT_VERSION = json.load(open("package.json"))["dependencies"]["react"][1:]
 
 
 class Handler(http.server.BaseHTTPRequestHandler):
@@ -16,14 +20,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def send_index(self):
         self.send_response(200)
         self.end_headers()
-        self.wfile.write("""
-<html>
-<head><title>House Manager</title></head>
-<body>
-<h1>House Manager</h1>
-<p><a href="/metrics">Metrics</a></p>
-</body>
-</html>""".encode("utf8"))
+        self.wfile.write(open("static/index.html").read().format(
+            bootstrap_version=BOOTSTRAP_VERSION,
+            react_version=REACT_VERSION
+        ).encode("utf8"))
 
     def send_metrics(self):
         metrics = get_metrics()
