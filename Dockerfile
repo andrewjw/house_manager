@@ -8,5 +8,7 @@ RUN pip3 install -r /house/requirements.txt
 
 ENV PYTHONPATH=/house
 
+WORKDIR /house
+
 ENTRYPOINT ["python3", "/house/bin/server.py"]
 CMD []
