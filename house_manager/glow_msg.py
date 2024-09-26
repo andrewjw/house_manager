@@ -108,6 +108,7 @@ def glow_msg(client, userdata, msg: Any) -> None:
             ELECTRIC_LAST_MSG = now
             ELECTRIC_COST += \
                 (import_cum - ELECTRIC_CUM) * get_electricity_price(now)
+            assert ELECTRIC_FEED_IN is not None
             ELECTRIC_FEED_IN += \
                 (exported - ELECTRIC_EXPORT) * get_export_price(now)
             ELECTRIC_CUM = import_cum

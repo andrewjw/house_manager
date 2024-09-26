@@ -2,8 +2,8 @@ from datetime import datetime, timedelta, UTC
 import os
 from typing import List, Optional
 
-import openmeteo_requests
-from retry_requests import retry
+import openmeteo_requests  # type:ignore
+from retry_requests import retry  # type:ignore
 
 RETRY_SESSION = retry(retries = 5, backoff_factor = 0.2)
 OPENMETEO = openmeteo_requests.Client(session = RETRY_SESSION)
@@ -17,7 +17,7 @@ PARAMS = {
 }
 
 class ForecastEntry:
-    def __init__(self, time: datetime, total: int, low: int, mid: int, high: int):
+    def __init__(self, time: datetime, total: float, low: float, mid: float, high: float):
         self.time = time
         self.total = total
         self.low = low
@@ -66,10 +66,10 @@ class CloudForecast:
             if self.forecast[i].time < time:
                 before = i
 
-        if before == len(self.forecast) - 1:
+        if before is None or before == len(self.forecast) - 1:
             # We're after the last forecast value
             return None
-        
+
         perc = (time - self.forecast[before].time).total_seconds() / 3600.0
         return ForecastEntry(
             time,
