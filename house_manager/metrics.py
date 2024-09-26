@@ -37,9 +37,10 @@ def get_metrics() -> str:
     lines.append(METRIC_HELP.format(metric="forecast_cloud", help="Cloud Cover"))
     lines.append(METRIC_TYPE.format(metric="forecast_cloud", _type="gauge"))
     forecast = CLOUDFORECAST.get_clouds(now)
-    lines.append(f'forecast_cloud{{level="total"}} {forecast.total}')
-    lines.append(f'forecast_cloud{{level="high"}} {forecast.high}')
-    lines.append(f'forecast_cloud{{level="mid"}} {forecast.mid}')
-    lines.append(f'forecast_cloud{{level="low"}} {forecast.low}')
+    if forecast is not None:
+        lines.append(f'forecast_cloud{{level="total"}} {forecast.total}')
+        lines.append(f'forecast_cloud{{level="high"}} {forecast.high}')
+        lines.append(f'forecast_cloud{{level="mid"}} {forecast.mid}')
+        lines.append(f'forecast_cloud{{level="low"}} {forecast.low}')
 
     return "\n".join(lines)
