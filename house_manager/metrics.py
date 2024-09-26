@@ -1,7 +1,9 @@
 from datetime import datetime, UTC
+import os
 
 from .glow_msg import get_glow_metrics
 from .prices import get_electricity_price, get_gas_price
+from .suncalc import getPosition, getMoonPosition, getMoonIllumination
 from .weather_forecast import CloudForecast
 
 METRIC = "glowprom_{metric}"
@@ -42,5 +44,28 @@ def get_metrics() -> str:
         lines.append(f'forecast_cloud{{level="high"}} {forecast.high}')
         lines.append(f'forecast_cloud{{level="mid"}} {forecast.mid}')
         lines.append(f'forecast_cloud{{level="low"}} {forecast.low}')
+
+    sun_position = getPosition(now, os.environ["HOUSE_LAT"], os.environ["HOUSE_LONG"])
+    moon_position = getMoonPosition(now, os.environ["HOUSE_LAT"], os.environ["HOUSE_LONG"])
+    moon_illumination = getMoonIllumination(now)
+
+    lines.append(METRIC_HELP.format(metric="sun_position", help="Position of the sun in sky"))
+    lines.append(METRIC_TYPE.format(metric="sun_position", _type="gauge"))
+    lines.append(f'sun_position{{dimension="azimuth"}} {sun_position["azimuth"]}')
+    sun_altitude = max(0, sun_position["altitude"])
+    lines.append(f'sun_position{{dimension="altitude"}} {sun_altitude}')
+
+    lines.append(METRIC_HELP.format(metric="moon_position", help="Position of the moon in sky"))
+    lines.append(METRIC_TYPE.format(metric="moon_position", _type="gauge"))
+    lines.append(f'moon_position{{dimension="azimuth"}} {moon_position["azimuth"]}')
+    moon_altitude = max(0, moon_position["altitude"])
+    lines.append(f'moon_position{{dimension="altitude"}} {moon_altitude}')
+    lines.append(f'moon_position{{dimension="distance"}} {moon_position["distance"]}')
+
+    lines.append(METRIC_HELP.format(metric="moon_illumination", help="Phase of the moon"))
+    lines.append(METRIC_TYPE.format(metric="moon_illumination", _type="gauge"))
+    lines.append(f'moon_illumination{{dimension="fraction"}} {moon_illumination["fraction"]}')
+    lines.append(f'moon_illumination{{dimension="phase"}} {moon_illumination["phase"]}')
+    lines.append(f'moon_illumination{{dimension="angle"}} {moon_illumination["angle"]}')
 
     return "\n".join(lines)
