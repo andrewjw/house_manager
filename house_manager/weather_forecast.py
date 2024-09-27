@@ -73,8 +73,8 @@ class CloudForecast:
         perc = (time - self.forecast[before].time).total_seconds() / 3600.0
         return ForecastEntry(
             time,
-            self.forecast[before].total * perc + self.forecast[before + 1].total * (1 - perc),
-            self.forecast[before].low * perc + self.forecast[before + 1].low * (1 - perc),
-            self.forecast[before].mid * perc + self.forecast[before + 1].mid * (1 - perc),
-            self.forecast[before].high * perc + self.forecast[before + 1].high * (1 - perc),
+            self.forecast[before + 1].total * perc + self.forecast[before].total * (1 - perc),
+            self.forecast[before + 1].low * perc + self.forecast[before].low * (1 - perc),
+            self.forecast[before + 1].mid * perc + self.forecast[before].mid * (1 - perc),
+            self.forecast[before + 1].high * perc + self.forecast[before].high * (1 - perc),
         )
