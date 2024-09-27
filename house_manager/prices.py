@@ -58,9 +58,9 @@ def get_gas_price(dt: datetime) -> float:
 
 
 def get_gas_standing_charge(dt: datetime) -> float:
-    if dt >= datetime(2024, 10, 1):
+    if dt >= datetime(2024, 10, 1, tzinfo=LONDON):
         return 0.29379
-    if dt >= datetime(2024, 4, 1):
+    if dt >= datetime(2024, 4, 1, tzinfo=LONDON):
         return 0.28949
     return 0.2747
 
