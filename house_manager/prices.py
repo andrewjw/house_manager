@@ -54,3 +54,11 @@ def get_gas_standing_charge(dt: datetime) -> float:
     if dt >= datetime(2024, 4, 1):
         return 0.28949
     return 0.2747
+
+
+def get_water_price(dt: datetime) -> float:
+    return (1.2668 + 1.1537) / 1000
+
+
+def get_water_standing_charge(dt: datetime) -> float:
+    return 0.3136

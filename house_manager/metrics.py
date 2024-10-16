@@ -2,6 +2,12 @@ from datetime import datetime, timezone
 
 from .glow_msg import get_glow_metrics
 from .prices import get_electricity_price, get_gas_price
+<<<<<<< Updated upstream
+=======
+from .suncalc import getPosition, getMoonPosition, getMoonIllumination
+from .water_cost import WaterCost
+from .weather_forecast import CloudForecast
+>>>>>>> Stashed changes
 
 METRIC = "glowprom_{metric}"
 METRIC_KEYS = "{{type=\"{type}\", {idname}=\"{idvalue}\"}}"
@@ -13,6 +19,9 @@ METRIC_METADATA = {
 METRIC_HELP = "# HELP {metric} {help}"
 METRIC_TYPE = "# TYPE {metric} {_type}"
 
+CLOUDFORECAST = CloudForecast()
+WATERCOST = WaterCost()
+WATERCOST.start()
 
 def get_metrics() -> str:
     now = datetime.utcnow()
@@ -29,6 +38,10 @@ def get_metrics() -> str:
         f'octopus_rate{{type="electric"}} {get_electricity_price(now)}')
     lines.append(
         f'octopus_rate{{type="gas"}} {get_gas_price(now)}')
+
+    lines.append(METRIC_HELP.format(metric="watercost_total", help="Total cost of water"))
+    lines.append(METRIC_TYPE.format(metric="watercost_total", _type="counter"))
+    lines.append(f'watercost_total {WATERCOST.cost}')
 
     lines.append(get_glow_metrics())
 
