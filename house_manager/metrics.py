@@ -1,3 +1,4 @@
+import argparse
 from datetime import datetime, UTC
 import os
 
@@ -19,7 +20,9 @@ METRIC_TYPE = "# TYPE {metric} {_type}"
 
 CLOUDFORECAST = CloudForecast()
 WATERCOST = WaterCost()
-WATERCOST.start()
+
+def start_metrics(args: argparse.Namespace) -> None:
+    WATERCOST.start(args)
 
 def get_metrics() -> str:
     now = datetime.now(UTC)
@@ -52,8 +55,8 @@ def get_metrics() -> str:
         lines.append(f'forecast_cloud{{level="mid"}} {forecast.mid}')
         lines.append(f'forecast_cloud{{level="low"}} {forecast.low}')
 
-    sun_position = getPosition(now, os.environ["HOUSE_LAT"], os.environ["HOUSE_LONG"])
-    moon_position = getMoonPosition(now, os.environ["HOUSE_LAT"], os.environ["HOUSE_LONG"])
+    sun_position = getPosition(now, float(os.environ["HOUSE_LAT"]), float(os.environ["HOUSE_LONG"]))
+    moon_position = getMoonPosition(now, float(os.environ["HOUSE_LAT"]), float(os.environ["HOUSE_LONG"]))
     moon_illumination = getMoonIllumination(now)
 
     lines.append(METRIC_HELP.format(metric="sun_position", help="Position of the sun in sky"))

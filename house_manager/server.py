@@ -2,7 +2,7 @@ from datetime import datetime
 import http.server
 import json
 
-from .metrics import get_metrics
+from .metrics import get_metrics, start_metrics
 
 BOOTSTRAP_VERSION = json.load(open("package.json"))["dependencies"]["bootstrap"][1:]
 REACT_VERSION = json.load(open("package.json"))["dependencies"]["react"][1:]
@@ -37,5 +37,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
 
 def serve(args):  # pragma: no cover
+    start_metrics(args)
+
     server = http.server.HTTPServer(args.bind, Handler)
     server.serve_forever()
