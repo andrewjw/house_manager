@@ -40,9 +40,9 @@ def get_export_price(dt: datetime) -> float:
 
 
 def get_electricity_standing_charge(dt: datetime) -> float:
-    if dt >= datetime(2024, 10, 1):
+    if dt >= datetime(2024, 10, 1, tzinfo=LONDON):
         return 0.48788
-    if dt >= datetime(2024, 4, 1):
+    if dt >= datetime(2024, 4, 1, tzinfo=LONDON):
         return 0.47849
     return 0.4201
 
