@@ -7,6 +7,7 @@ from typing import Optional
 from prometheus_api_client import PrometheusConnect  # type:ignore
 
 from .prices import get_water_price, get_water_standing_charge
+from .utils import report_exception
 
 class WaterCost:
     def __init__(self) -> None:
@@ -22,6 +23,7 @@ class WaterCost:
         self.thread.daemon = False
         self.thread.start()
 
+    @report_exception
     def _update(self) -> None:
         while True:
             dt = datetime.now(UTC)

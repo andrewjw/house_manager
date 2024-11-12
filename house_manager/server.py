@@ -1,14 +1,32 @@
 from datetime import datetime
 import http.server
 import json
+import traceback
+
+from sentry_sdk import capture_exception  # type:ignore
 
 from .metrics import get_metrics, start_metrics
 
 BOOTSTRAP_VERSION = json.load(open("package.json"))["dependencies"]["bootstrap"][1:]
 REACT_VERSION = json.load(open("package.json"))["dependencies"]["react"][1:]
 
+def handle_error(func):
+    def r(self, *args, **kwargs):
+        try:
+            return func(self, *args, **kwargs)
+        except Exception as e:
+            traceback.print_exception(e)
+            capture_exception(e)
+
+            self.send_response(500)
+            self.send_header("Content-type", "text/plain")
+            self.end_headers()
+
+            self.wfile.write(f"Exception Occurred.\n".encode("utf8"))
+    return r
 
 class Handler(http.server.BaseHTTPRequestHandler):
+    @handle_error
     def do_GET(self):
         if self.path == "/":
             self.send_index()
