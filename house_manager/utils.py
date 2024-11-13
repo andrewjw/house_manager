@@ -7,3 +7,4 @@ def report_exception(func):
         except Exception as e:
             sentry_sdk.capture_exception(e)
             raise
+    return f
