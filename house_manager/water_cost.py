@@ -28,6 +28,10 @@ class WaterCost:
         while True:
             dt = datetime.now(UTC)
             data = self._prom.get_current_metric_value(metric_name='watermeter_count')
+            if len(data) == 0:
+                sleep(30)
+                continue
+
             usage = float(data[0]["value"][1])
 
             if self.last_update is not None and self.last_update.date() != dt.date():
