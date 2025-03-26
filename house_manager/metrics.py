@@ -1,3 +1,4 @@
+
 import argparse
 from datetime import datetime, UTC
 import os
@@ -21,8 +22,10 @@ METRIC_TYPE = "# TYPE {metric} {_type}"
 CLOUDFORECAST = CloudForecast()
 WATERCOST = WaterCost()
 
+
 def start_metrics(args: argparse.Namespace) -> None:
     WATERCOST.start(args)
+
 
 def get_metrics() -> str:
     now = datetime.now(UTC)

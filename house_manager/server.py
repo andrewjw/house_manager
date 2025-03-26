@@ -10,6 +10,7 @@ from .metrics import get_metrics, start_metrics
 BOOTSTRAP_VERSION = json.load(open("package.json"))["dependencies"]["bootstrap"][1:]
 REACT_VERSION = json.load(open("package.json"))["dependencies"]["react"][1:]
 
+
 def handle_error(func):
     def r(self, *args, **kwargs):
         try:
@@ -24,6 +25,7 @@ def handle_error(func):
 
             self.wfile.write(f"Exception Occurred.\n".encode("utf8"))
     return r
+
 
 class Handler(http.server.BaseHTTPRequestHandler):
     @handle_error
