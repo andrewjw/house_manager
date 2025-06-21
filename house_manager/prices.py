@@ -16,7 +16,8 @@ def get_electricity_price(dt: datetime) -> float:
        or (dt.date() == date(2024, 8, 31) and localtime.hour == 13) \
        or (dt.date() == date(2024, 9, 10) and localtime.hour == 13) \
        or (dt.date() == date(2024, 10, 20) and localtime.hour == 13) \
-       or (dt.date() == date(2024, 11, 24) and localtime.hour in (7, 8)):
+       or (dt.date() == date(2024, 11, 24) and localtime.hour in (7, 8)) \
+       or (dt.date() == date(2025, 6, 21) and localtime.hour == 14:
         return 0
     if dt >= datetime(2025, 4, 1, tzinfo=LONDON):
         return 0.085 if cheap_rate else 0.28959
@@ -78,6 +79,8 @@ def get_gas_standing_charge(dt: datetime) -> float:
 
 
 def get_water_price(dt: datetime) -> float:
+    if dt >= datetime(2025, 4, 1, tzinfo=LONDON):
+        return (1.5196 + 1.5480) / 1000
     return (1.2668 + 1.1537) / 1000
 
 
