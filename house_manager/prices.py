@@ -17,7 +17,16 @@ def get_electricity_price(dt: datetime) -> float:
        or (dt.date() == date(2024, 9, 10) and localtime.hour == 13) \
        or (dt.date() == date(2024, 10, 20) and localtime.hour == 13) \
        or (dt.date() == date(2024, 11, 24) and localtime.hour in (7, 8)) \
-       or (dt.date() == date(2025, 6, 21) and localtime.hour == 14):
+       or (dt.date() == date(2025, 6, 21) and localtime.hour == 14) \
+       or (dt.date() == date(2025, 8, 9) and localtime.hour == 14) \
+       or (dt.date() == date(2025, 8, 31) and localtime.hour == 14) \
+       or (dt.date() == date(2025, 9, 1) and localtime.hour == 14) \
+       or (dt.date() == date(2025, 9, 6) and localtime.hour == 14) \
+       or (dt.date() == date(2025, 9, 7) and localtime.hour in (12, 13)) \
+       or (dt.date() == date(2025, 9, 11) and localtime.hour == 12) \
+       or (dt.date() == date(2025, 10, 4) and localtime.hour in (12, 13)) \
+       or (dt.date() == date(2025, 10, 5) and localtime.hour == 11) \
+       or (dt.date() == date(2025, 10, 24) and localtime.hour == 21):
         return 0
     if dt >= datetime(2025, 4, 1, tzinfo=LONDON):
         return 0.085 if cheap_rate else 0.28959
