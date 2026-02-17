@@ -26,8 +26,11 @@ def get_electricity_price(dt: datetime) -> float:
        or (dt.date() == date(2025, 9, 11) and localtime.hour == 12) \
        or (dt.date() == date(2025, 10, 4) and localtime.hour in (12, 13)) \
        or (dt.date() == date(2025, 10, 5) and localtime.hour == 11) \
-       or (dt.date() == date(2025, 10, 24) and localtime.hour == 21):
+       or (dt.date() == date(2025, 10, 24) and localtime.hour == 21) \
+       or (dt.date() == date(2025, 10, 25) and localtime.hour in (12, 13, 14)):
         return 0
+    if dt >= datetime(2026, 1, 1, tzinfo=LONDON):
+        return 0.085 if cheap_rate else 0.30605
     if dt >= datetime(2025, 4, 1, tzinfo=LONDON):
         return 0.085 if cheap_rate else 0.28959
     if dt >= datetime(2025, 1, 1, tzinfo=LONDON):
@@ -52,12 +55,16 @@ def get_cheap_rate_end(dt: datetime) -> datetime:
 
 
 def get_export_price(dt: datetime) -> float:
+    if dt >= datetime(2026, 3, 1, tzinfo=LONDON):
+        return 0.12
     if dt >= datetime(2024, 11, 15, tzinfo=LONDON):
         return 0.15
     return 0.08
 
 
 def get_electricity_standing_charge(dt: datetime) -> float:
+    if dt >= datetime(2026, 1, 1, tzinfo=LONDON):
+        return 0.48389
     if dt >= datetime(2025, 7, 1, tzinfo=LONDON):
         return 0.45422
     if dt >= datetime(2025, 4, 1, tzinfo=LONDON):
