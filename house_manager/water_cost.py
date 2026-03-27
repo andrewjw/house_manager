@@ -34,7 +34,7 @@ class WaterCost:
                 data = self._prom.get_current_metric_value(
                     metric_name="watermeter_count"
                 )
-            except requests.ConnectionError as e:
+            except (requests.ConnectionError, requests.exceptions.RetryError) as e:
                 sys.stderr.write(f"Error querying water usage - {e}\n")
                 sys.stderr.flush()
                 data = []
