@@ -6,4 +6,4 @@ mypy -p house_manager
 
 mypy bin/server.py
 
-${PYCODESTYLE:-pycodestyle} bin/server.py house_manager/
+${BLACK:-black} --check bin/server.py house_manager/

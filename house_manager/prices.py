@@ -6,28 +6,34 @@ LONDON = zoneinfo.ZoneInfo("Europe/London")
 
 def get_electricity_price(dt: datetime) -> float:
     localtime = dt.astimezone(LONDON)
-    cheap_rate = (localtime.hour == 0 and localtime.minute >= 30) \
-        or localtime.hour in (1, 2, 3) \
-        or ((localtime.hour == 4 or (localtime.hour == 5 and localtime.minute < 30)) \
-            if dt >= datetime(2024, 7, 1, tzinfo=LONDON) else
-            (localtime.hour == 4 and localtime.minute < 30))
+    cheap_rate = (
+        (localtime.hour == 0 and localtime.minute >= 30)
+        or localtime.hour in (1, 2, 3)
+        or (
+            (localtime.hour == 4 or (localtime.hour == 5 and localtime.minute < 30))
+            if dt >= datetime(2024, 7, 1, tzinfo=LONDON)
+            else (localtime.hour == 4 and localtime.minute < 30)
+        )
+    )
 
-    if (dt.date() == date(2024, 8, 15) and localtime.hour == 13) \
-       or (dt.date() == date(2024, 8, 31) and localtime.hour == 13) \
-       or (dt.date() == date(2024, 9, 10) and localtime.hour == 13) \
-       or (dt.date() == date(2024, 10, 20) and localtime.hour == 13) \
-       or (dt.date() == date(2024, 11, 24) and localtime.hour in (7, 8)) \
-       or (dt.date() == date(2025, 6, 21) and localtime.hour == 14) \
-       or (dt.date() == date(2025, 8, 9) and localtime.hour == 14) \
-       or (dt.date() == date(2025, 8, 31) and localtime.hour == 14) \
-       or (dt.date() == date(2025, 9, 1) and localtime.hour == 14) \
-       or (dt.date() == date(2025, 9, 6) and localtime.hour == 14) \
-       or (dt.date() == date(2025, 9, 7) and localtime.hour in (12, 13)) \
-       or (dt.date() == date(2025, 9, 11) and localtime.hour == 12) \
-       or (dt.date() == date(2025, 10, 4) and localtime.hour in (12, 13)) \
-       or (dt.date() == date(2025, 10, 5) and localtime.hour == 11) \
-       or (dt.date() == date(2025, 10, 24) and localtime.hour == 21) \
-       or (dt.date() == date(2025, 10, 25) and localtime.hour in (12, 13, 14)):
+    if (
+        (dt.date() == date(2024, 8, 15) and localtime.hour == 13)
+        or (dt.date() == date(2024, 8, 31) and localtime.hour == 13)
+        or (dt.date() == date(2024, 9, 10) and localtime.hour == 13)
+        or (dt.date() == date(2024, 10, 20) and localtime.hour == 13)
+        or (dt.date() == date(2024, 11, 24) and localtime.hour in (7, 8))
+        or (dt.date() == date(2025, 6, 21) and localtime.hour == 14)
+        or (dt.date() == date(2025, 8, 9) and localtime.hour == 14)
+        or (dt.date() == date(2025, 8, 31) and localtime.hour == 14)
+        or (dt.date() == date(2025, 9, 1) and localtime.hour == 14)
+        or (dt.date() == date(2025, 9, 6) and localtime.hour == 14)
+        or (dt.date() == date(2025, 9, 7) and localtime.hour in (12, 13))
+        or (dt.date() == date(2025, 9, 11) and localtime.hour == 12)
+        or (dt.date() == date(2025, 10, 4) and localtime.hour in (12, 13))
+        or (dt.date() == date(2025, 10, 5) and localtime.hour == 11)
+        or (dt.date() == date(2025, 10, 24) and localtime.hour == 21)
+        or (dt.date() == date(2025, 10, 25) and localtime.hour in (12, 13, 14))
+    ):
         return 0
     if dt >= datetime(2026, 1, 1, tzinfo=LONDON):
         return 0.085 if cheap_rate else 0.30605

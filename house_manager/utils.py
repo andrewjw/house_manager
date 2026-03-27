@@ -1,4 +1,5 @@
-import sentry_sdk  # type:ignore
+import sentry_sdk  # type: ignore
+
 
 def report_exception(func):
     def f(*args, **kwargs):
@@ -7,4 +8,5 @@ def report_exception(func):
         except Exception as e:
             sentry_sdk.capture_exception(e)
             raise
+
     return f

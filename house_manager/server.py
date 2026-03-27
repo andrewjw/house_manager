@@ -3,7 +3,7 @@ import http.server
 import json
 import traceback
 
-from sentry_sdk import capture_exception  # type:ignore
+from sentry_sdk import capture_exception  # type: ignore
 
 from .metrics import get_metrics, start_metrics
 
@@ -24,6 +24,7 @@ def handle_error(func):
             self.end_headers()
 
             self.wfile.write(f"Exception Occurred.\n".encode("utf8"))
+
     return r
 
 
@@ -40,10 +41,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def send_index(self):
         self.send_response(200)
         self.end_headers()
-        self.wfile.write(open("static/index.html").read().format(
-            bootstrap_version=BOOTSTRAP_VERSION,
-            react_version=REACT_VERSION
-        ).encode("utf8"))
+        self.wfile.write(
+            open("static/index.html")
+            .read()
+            .format(bootstrap_version=BOOTSTRAP_VERSION, react_version=REACT_VERSION)
+            .encode("utf8")
+        )
 
     def send_metrics(self):
         metrics = get_metrics()

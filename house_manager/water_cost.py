@@ -5,7 +5,7 @@ from threading import Thread
 from typing import Optional
 import sys
 
-from prometheus_api_client import PrometheusConnect  # type:ignore
+from prometheus_api_client import PrometheusConnect  # type: ignore
 import requests
 
 from .prices import get_water_price, get_water_standing_charge
@@ -32,7 +32,8 @@ class WaterCost:
             dt = datetime.now(UTC)
             try:
                 data = self._prom.get_current_metric_value(
-                    metric_name='watermeter_count')
+                    metric_name="watermeter_count"
+                )
             except requests.ConnectionError as e:
                 sys.stderr.write(f"Error querying water usage - {e}\n")
                 sys.stderr.flush()
@@ -44,8 +45,7 @@ class WaterCost:
 
             usage = float(data[0]["value"][1])
 
-            if self.last_update is not None \
-               and self.last_update.date() != dt.date():
+            if self.last_update is not None and self.last_update.date() != dt.date():
                 self.cost += get_water_standing_charge(dt)
 
             self.last_update = dt
