@@ -6,16 +6,41 @@ LONDON = zoneinfo.ZoneInfo("Europe/London")
 
 def get_electricity_price(dt: datetime) -> float:
     localtime = dt.astimezone(LONDON)
-    cheap_rate = (localtime.hour == 0 and localtime.minute >= 30) \
-        or localtime.hour in (1, 2, 3) \
-        or ((localtime.hour == 4 or (localtime.hour == 5 and localtime.minute < 30)) \
-            if dt >= datetime(2024, 7, 1, tzinfo=LONDON) else
-            (localtime.hour == 4 and localtime.minute < 30))
+    cheap_rate = (
+        (localtime.hour == 0 and localtime.minute >= 30)
+        or localtime.hour in (1, 2, 3)
+        or (
+            (localtime.hour == 4 or (localtime.hour == 5 and localtime.minute < 30))
+            if dt >= datetime(2024, 7, 1, tzinfo=LONDON)
+            else (localtime.hour == 4 and localtime.minute < 30)
+        )
+    )
 
-    if (dt.date() == date(2024, 8, 15) and localtime.hour == 13) \
-       or (dt.date() == date(2024, 8, 31) and localtime.hour == 13) \
-       or (dt.date() == date(2024, 9, 10) and localtime.hour == 13):
+    if (
+        (dt.date() == date(2024, 8, 15) and localtime.hour == 13)
+        or (dt.date() == date(2024, 8, 31) and localtime.hour == 13)
+        or (dt.date() == date(2024, 9, 10) and localtime.hour == 13)
+        or (dt.date() == date(2024, 10, 20) and localtime.hour == 13)
+        or (dt.date() == date(2024, 11, 24) and localtime.hour in (7, 8))
+        or (dt.date() == date(2025, 6, 21) and localtime.hour == 14)
+        or (dt.date() == date(2025, 8, 9) and localtime.hour == 14)
+        or (dt.date() == date(2025, 8, 31) and localtime.hour == 14)
+        or (dt.date() == date(2025, 9, 1) and localtime.hour == 14)
+        or (dt.date() == date(2025, 9, 6) and localtime.hour == 14)
+        or (dt.date() == date(2025, 9, 7) and localtime.hour in (12, 13))
+        or (dt.date() == date(2025, 9, 11) and localtime.hour == 12)
+        or (dt.date() == date(2025, 10, 4) and localtime.hour in (12, 13))
+        or (dt.date() == date(2025, 10, 5) and localtime.hour == 11)
+        or (dt.date() == date(2025, 10, 24) and localtime.hour == 21)
+        or (dt.date() == date(2025, 10, 25) and localtime.hour in (12, 13, 14))
+    ):
         return 0
+    if dt >= datetime(2026, 1, 1, tzinfo=LONDON):
+        return 0.085 if cheap_rate else 0.30605
+    if dt >= datetime(2025, 4, 1, tzinfo=LONDON):
+        return 0.085 if cheap_rate else 0.28959
+    if dt >= datetime(2025, 1, 1, tzinfo=LONDON):
+        return 0.085 if cheap_rate else 0.27102
     if dt >= datetime(2024, 10, 1, tzinfo=LONDON):
         return 0.085 if cheap_rate else 0.26716
     if dt >= datetime(2024, 7, 1, tzinfo=LONDON):
@@ -36,18 +61,30 @@ def get_cheap_rate_end(dt: datetime) -> datetime:
 
 
 def get_export_price(dt: datetime) -> float:
+    if dt >= datetime(2026, 3, 1, tzinfo=LONDON):
+        return 0.12
+    if dt >= datetime(2024, 11, 15, tzinfo=LONDON):
+        return 0.15
     return 0.08
 
 
 def get_electricity_standing_charge(dt: datetime) -> float:
+    if dt >= datetime(2026, 1, 1, tzinfo=LONDON):
+        return 0.48389
+    if dt >= datetime(2025, 7, 1, tzinfo=LONDON):
+        return 0.45422
+    if dt >= datetime(2025, 4, 1, tzinfo=LONDON):
+        return 0.47606
     if dt >= datetime(2024, 10, 1, tzinfo=LONDON):
         return 0.48788
-    if dt >= datetime(2024, 4, 1), tzinfo=LONDON:
+    if dt >= datetime(2024, 4, 1, tzinfo=LONDON):
         return 0.47849
     return 0.4201
 
 
 def get_gas_price(dt: datetime) -> float:
+    if dt >= datetime(2025, 1, 1, tzinfo=LONDON):
+        return 0.06260
     if dt >= datetime(2024, 10, 1, tzinfo=LONDON):
         return 0.06161
     if dt >= datetime(2024, 7, 1, tzinfo=LONDON):
@@ -63,3 +100,13 @@ def get_gas_standing_charge(dt: datetime) -> float:
     if dt >= datetime(2024, 4, 1, tzinfo=LONDON):
         return 0.28949
     return 0.2747
+
+
+def get_water_price(dt: datetime) -> float:
+    if dt >= datetime(2025, 4, 1, tzinfo=LONDON):
+        return (1.5196 + 1.5480) / 1000
+    return (1.2668 + 1.1537) / 1000
+
+
+def get_water_standing_charge(dt: datetime) -> float:
+    return 0.3136

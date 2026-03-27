@@ -17,9 +17,7 @@ def main(argv: List[str]) -> None:
 
     args = get_arguments(argv[1:])
 
-    threading.Thread(target=connect,
-                     args=(args, ),
-                     daemon=True).start()
+    threading.Thread(target=connect, args=(args,), daemon=True).start()
 
     serve(args)
 

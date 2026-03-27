@@ -2,8 +2,13 @@ from datetime import datetime, UTC
 import json
 from typing import Any, Optional
 
-from .prices import get_electricity_price, get_electricity_standing_charge, \
-                    get_gas_price, get_gas_standing_charge, get_export_price
+from .prices import (
+    get_electricity_price,
+    get_electricity_standing_charge,
+    get_gas_price,
+    get_gas_standing_charge,
+    get_export_price,
+)
 
 # {'electricitymeter': {'timestamp': '2022-11-07T09:20:08Z',
 #   'energy': {'export': {'cumulative': 0.0, 'units': 'kWh'},
@@ -27,7 +32,7 @@ from .prices import get_electricity_price, get_electricity_standing_charge, \
 #                         'price': {'unitrate': 0.03623,
 #                                   'standingcharge': 0.168}}}}}
 METRIC = "glowprom_{metric}"
-METRIC_KEYS = "{{type=\"{type}\", {idname}=\"{idvalue}\"}}"
+METRIC_KEYS = '{{type="{type}", {idname}="{idvalue}"}}'
 
 METRIC_METADATA = {
     "octopus_cost": ("The cost of energy used", "counter"),
@@ -51,10 +56,7 @@ GAS_COST: Optional[float] = None
 
 
 def glow_msg(client, userdata, msg: Any) -> None:
-    global ELECTRIC_LAST_MSG, GAS_LAST_MSG, \
-           ELECTRIC_COST, GAS_COST, \
-           ELECTRIC_CUM, GAS_CUM, ELECTRIC_FEED_IN, \
-           ELECTRIC_LAST_POWER, ELECTRIC_EXPORT
+    global ELECTRIC_LAST_MSG, GAS_LAST_MSG, ELECTRIC_COST, GAS_COST, ELECTRIC_CUM, GAS_CUM, ELECTRIC_FEED_IN, ELECTRIC_LAST_POWER, ELECTRIC_EXPORT
     # # Code adapted from
     # # https://gist.github.com/ndfred/b373eeafc4f5b0870c1b8857041289a9
     payload = json.loads(msg.payload)
@@ -72,11 +74,11 @@ def glow_msg(client, userdata, msg: Any) -> None:
         #    convert_units(energy["export"]["cumulative"],
         #                  energy["export"]["units"])
 
-        import_cum = convert_units(energy["import"]["cumulative"],
-                                   energy["import"]["units"])
+        import_cum = convert_units(
+            energy["import"]["cumulative"], energy["import"]["units"]
+        )
 
-        if ELECTRIC_LAST_MSG is None or ELECTRIC_COST is None \
-           or ELECTRIC_CUM is None:
+        if ELECTRIC_LAST_MSG is None or ELECTRIC_COST is None or ELECTRIC_CUM is None:
             ELECTRIC_LAST_MSG = now
             ELECTRIC_COST = 0.0
             ELECTRIC_FEED_IN = 0.0
@@ -98,19 +100,16 @@ def glow_msg(client, userdata, msg: Any) -> None:
                     avg_power = abs(power / 2)
                 else:
                     avg_power = 0
-                exported = ELECTRIC_EXPORT \
-                    + avg_power * (gap_since / (60 * 60))
+                exported = ELECTRIC_EXPORT + avg_power * (gap_since / (60 * 60))
             else:
                 exported = ELECTRIC_EXPORT
 
             ELECTRIC_LAST_POWER = power
 
             ELECTRIC_LAST_MSG = now
-            ELECTRIC_COST += \
-                (import_cum - ELECTRIC_CUM) * get_electricity_price(now)
+            ELECTRIC_COST += (import_cum - ELECTRIC_CUM) * get_electricity_price(now)
             assert ELECTRIC_FEED_IN is not None
-            ELECTRIC_FEED_IN += \
-                (exported - ELECTRIC_EXPORT) * get_export_price(now)
+            ELECTRIC_FEED_IN += (exported - ELECTRIC_EXPORT) * get_export_price(now)
             ELECTRIC_CUM = import_cum
             ELECTRIC_EXPORT = exported
 
@@ -119,8 +118,9 @@ def glow_msg(client, userdata, msg: Any) -> None:
         if mprn.lower() == "read pending":
             return
 
-        gas_cum = convert_units(energy["import"]["cumulative"],
-                                energy["import"]["units"])
+        gas_cum = convert_units(
+            energy["import"]["cumulative"], energy["import"]["units"]
+        )
         if GAS_LAST_MSG is None or GAS_COST is None or GAS_CUM is None:
             GAS_LAST_MSG = now
             GAS_COST = 0.0
