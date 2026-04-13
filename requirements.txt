@@ -2,7 +2,7 @@ paho-mqtt==2.1.0
 types-paho-mqtt==1.6.0.20240321
 black==26.3.1
 mypy==1.19.1
-sentry-sdk==2.56.0
+sentry-sdk==2.58.0
 requests==2.33.0
 types-requests==2.33.0.20260327
 openmeteo-requests==1.7.5
