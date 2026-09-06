@@ -4,7 +4,7 @@ black==26.5.1
 mypy==1.20.2
 sentry-sdk==2.63.0
 requests==2.34.2
-types-requests==2.33.0.20260518
+types-requests==2.33.0.20260906
 openmeteo-requests==1.7.5
 retry-requests==2.0.0
 prometheus-api-client==0.7.2
